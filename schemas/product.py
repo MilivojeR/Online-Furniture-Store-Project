@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import List, Optional
+
+from schemas.images import ProductImageCreate
 
 
 class ProductBase(BaseModel):
@@ -13,6 +15,7 @@ class ProductBase(BaseModel):
 
 
 class ProductCreate(ProductBase):
+     images: List[ProductImageCreate] = []
      pass
 
 
