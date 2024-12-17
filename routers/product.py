@@ -4,13 +4,15 @@ import crud.product as products
 from schemas.product import  ProductCreate,ProductUpdate,ProductBase,Product
 from exceptions import DbnotFoundException
 from database import db
+from crud.token import check_admin_role
 
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, Query
-router = APIRouter(prefix="/product", tags=["product"])
+from fastapi import APIRouter, HTTPException, Depends
 
 
 
+
+router = APIRouter(prefix="/products", tags=["product"])
 @router.get("/{product_id}", response_model=Product)
 def get_product(product_id: int, db: db):
     try:
@@ -27,7 +29,7 @@ def get_products( db: db):
         raise HTTPException(status_code=404, detail=f"Not any procucts found!")
 
 
-@router.post("", response_model=ProductCreate, status_code=201)
+@router.post("", response_model=ProductCreate, status_code=201,)
 def create_product(product:ProductCreate, db: db):
     product = products.create_product(db, product)
     db.commit()

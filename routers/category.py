@@ -7,7 +7,7 @@ from database import db
 
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query
-router = APIRouter(prefix="/category", tags=["category"])
+router = APIRouter(prefix="/categorys", tags=["category"])
 
 
 
