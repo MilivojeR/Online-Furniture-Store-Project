@@ -1,53 +1,44 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
-import crud.admin as admins 
-from schemas.admin import  AdminCreate,AdminUpdate,AdminBase,Admin
+from crud.token import check_admin_role
+from schemas.admin import Admin, AdminCreate, AdminUpdate
+from database import get_db
+import crud.admin as admins
 from exceptions import DbnotFoundException
-from database import db
 
-from typing import Annotated
-from fastapi import APIRouter, HTTPException, Query
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter()
 
-
-
-@router.get("/{admin_id}", response_model=Admin)
-def get_admin(admin_id: int, db: db):
+# Admin-only endpoint: Fetch a single admin by ID
+@router.get("/{admin_id}", response_model=Admin, dependencies=[Depends(check_admin_role)], tags=["admin"])
+def get_admin(admin_id: int, db: Session = Depends(get_db)):
     try:
-        return admins.get_admin(db, admin_id)
+        return admins.get_admin_by_id(db, admin_id)
     except DbnotFoundException:
         raise HTTPException(status_code=404, detail=f"Admin {admin_id} not found!")
 
+# Admin-only endpoint: Fetch all admins
+@router.get("/", response_model=list[Admin], dependencies=[Depends(check_admin_role)], tags=["admin"])
+def get_admins(db: Session = Depends(get_db)):
+    try:
+        return admins.get_admins(db)
+    except DbnotFoundException:
+        raise HTTPException(status_code=404, detail="No admins found!")
 
-@router.post("", response_model=AdminCreate, status_code=201)
-def create_admin(admin:AdminCreate, db: db):
+# Admin-only endpoint: Create a new admin
+@router.post("/", response_model=AdminCreate, status_code=201, dependencies=[Depends(check_admin_role)], tags=["admin"])
+def create_admin(admin: AdminCreate, db: Session = Depends(get_db)):
     admin = admins.create_admin(db, admin)
-    db.commit()
-    db.refresh(admin)
     return admin
 
-
-@router.put("/{admin_id}", response_model=AdminUpdate)
-def update_admin(admin_id: int, admin: AdminUpdate, db: db):
+# Admin-only endpoint: Update an admin's details
+@router.put("/{admin_id}", response_model=AdminUpdate, dependencies=[Depends(check_admin_role)], tags=["admin"])
+def update_admin(admin_id: int, admin: AdminUpdate, db: Session = Depends(get_db)):
     try:
         admin = admins.update_admin(db, admin_id, admin)
-        db.commit()
-        db.refresh(admin)
         return admin
     except DbnotFoundException:
         raise HTTPException(status_code=404, detail=f"Admin {admin_id} not found!")
-
-
-@router.delete("/{admin_id}", status_code=204)
-def delete_admin(admin_id: int, db: db):
-    try:
-        admins.delete_admin(db, admin_id)
-        db.commit()
-    except DbnotFoundException:
-        raise HTTPException(status_code=404, detail=f"Admin {admin_id} not found!")
-
-
-
-
 
 
 

@@ -6,7 +6,7 @@ from database import db
 
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query
-router = APIRouter(prefix="/costumer", tags=["costumer"])
+router = APIRouter(prefix="/costumers", tags=["costumer"])
 
 @router.get("/last-month", response_model=list[Costumer])
 def get_last_month_new_costumers( db: db):

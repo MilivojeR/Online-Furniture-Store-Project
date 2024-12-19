@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from typing import Optional
 from datetime import datetime
 
@@ -6,18 +6,21 @@ class CostumerBase(BaseModel):
     costumer_first_name: str
     costumer_last_name: str
     costumer_email: EmailStr
-    costumer_password: str  
     costumer_adress:str
     costumer_all_order_details: Optional[str] = ""  # Default to empty string
     costumer_total_points_acquired: int = 0  # Default to 0
     costumer_day_created: Optional[datetime] = None  # New field
     costumer_day_last_purchase: Optional[datetime] = None  # New field
+  
 
     class Config:
         orm_mode = True  
 
 
 class CostumerCreate(CostumerBase):
+
+    costumer_role: str =Field(default="Costumer")  # Role field
+    costumer_password: str  
     class Config:
         orm_mode = True  # 
 

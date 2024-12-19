@@ -1,6 +1,6 @@
 
 import datetime
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
@@ -13,3 +13,4 @@ class Admin(Base):
     admin_last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     admin_password: Mapped[str] = mapped_column(String(128), nullable=False)
     admin_email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    admin_role: Mapped[str] = mapped_column(String(50), default="Admin", nullable=False) 

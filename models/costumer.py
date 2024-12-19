@@ -15,6 +15,7 @@ class Costumer(Base):
     costumer_all_order_details: Mapped[str] = mapped_column(Text, nullable=True)
     costumer_total_points_acquired: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     costumer_adress: Mapped[str] = mapped_column(String(255), nullable=False)
+    costumer_role: Mapped[str] = mapped_column(String(50), default="Costumer", nullable=False) 
 
   
     costumer_day_created: Mapped[datetime.datetime] = mapped_column(
