@@ -2,7 +2,8 @@ import React from 'react'
 
 function HomePage() {
   return (
-    <div>HomePage Lejla</div>
+    <div>
+    </div>
   )
 }
 

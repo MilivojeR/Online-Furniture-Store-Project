@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 
 // router
 import { Outlet } from 'react-router'

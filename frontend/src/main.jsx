@@ -15,6 +15,7 @@ import HomePage from './pages/HomePage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
 import SingleProductPage from './pages/SingleProductPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import Header from './components/Header.jsx';
 
 
 
@@ -25,11 +26,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <HomePage />
+        element: <><Header/><HomePage /></>
       },
       {
         path: '/products',
-        element: <ProductsPage />
+        element: <><Header/><ProductsPage /></>
       },
       {
         path: '/logIn',

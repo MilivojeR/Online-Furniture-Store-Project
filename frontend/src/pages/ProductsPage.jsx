@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 
 
@@ -6,6 +6,7 @@ import axios from 'axios'
 import ProductService from '../services/productService'
 
 function ProductsPage() {
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     // ProductService.getAllProducts()
@@ -15,7 +16,7 @@ function ProductsPage() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          'https://04dc-62-4-41-75.ngrok-free.app/product',  // API endpoint
+          "https://954e-62-4-41-75.ngrok-free.app/product",  // API endpoint
           {
             headers: {
               'Accept': 'application/json',  // Postavljanje Accept header-a
@@ -24,6 +25,7 @@ function ProductsPage() {
           }
         );
         console.log(response.data);
+        setProducts(response.data);
       } catch (error) {
         console.log(error.message);
       }
@@ -40,16 +42,20 @@ function ProductsPage() {
       <h1>All products</h1>
       <hr/>
       <div className='mt-3 d-flex p-4 flex-wrap justify-content-around'>
-        <div className='card me-3 mt-3' style={{width: "350px", height: "450px"}}> 
-          <img className='card-img-top' style={{height: "255px"}} src={`https://www.branchfurniture.com/cdn/shop/products/coralherocopy.jpg?v=1652368917`}/>
-          <div className='card-body'>
-            <h4 className='card-title'>Naziv proizvoda</h4>
-            <h5 className='card-subtitle mb-2 text-muted'>Opis proizvoda</h5>
+        {
+          products.map(p => (
+          <div className='card me-3 mt-3' style={{width: "350px", height: "550px"}} key={p.product_id}> 
+            <img className='card-img-top' style={{height: "255px"}} src={p.product_picture_url}/>
+            <div className='card-body'>
+              <h4 className='card-title'>{p.product_name}</h4>
+              <p className='card-subtitle mb-2 text-muted'>{p.product_description}</p>
+            </div>
+            <div className='card-footer'>
+              <button className='btn btn-warning btn-sm'>Kontakt za informacije</button>
+            </div>
           </div>
-          <div className='card-footer'>
-            <button className='btn btn-warning btn-sm'>Kontakt za informacije</button>
-          </div>
-        </div>
+          ))
+        }
       </div>
       
     </div>
