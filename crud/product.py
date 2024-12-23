@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from exceptions import DbnotFoundException
-from models.images import ProductImage
 from models.product import Product
 from schemas.product import ProductCreate, ProductUpdate
 
@@ -22,8 +21,10 @@ def create_product(db: Session, product_data: ProductCreate) -> Product:
     new_product = Product(
         product_name=product_data.product_name,
         product_price=product_data.product_price,
+        product_video_url=product_data.product_video_url,
         product_picture_url=product_data.product_picture_url,
         product_description=product_data.product_description,
+        product_category_id=product_data.product_category_id,
     
     )
     db.add(new_product)
@@ -59,8 +60,3 @@ def get_products(db: Session)->  list[Product]:
         
         products = db.query(Product).all()
         return products
-
-def add_product_image(db, image_data, product_id):
-    new_image = ProductImage(image_url=image_data.image_url, product_id=product_id)
-    db.add(new_image)
-    return new_image

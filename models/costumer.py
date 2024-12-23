@@ -1,8 +1,8 @@
 import datetime
 from sqlalchemy import DateTime, Integer, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column,relationship
 from database import Base
-
+from models.shopping_cart import ShoppingCart
 
 class Costumer(Base):
     __tablename__ = "Costumer"
@@ -24,6 +24,7 @@ class Costumer(Base):
     costumer_day_last_purchase: Mapped[datetime.datetime] = mapped_column(
         DateTime, nullable=True
     )  # Nullable, initially no purchases made
+    shopping_cart: Mapped["ShoppingCart"] = relationship("ShoppingCart", back_populates="costumer", uselist=False)
 
 
 

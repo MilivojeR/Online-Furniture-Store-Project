@@ -67,7 +67,7 @@ def get_current_user_role(token: str = Depends(oauth2_scheme)) -> str:
 # Dependency to check if the user is an admin
 def get_admin_user(token: str = Depends(oauth2_scheme)):
     role = get_current_user_role(token)
-    if role != "admin":
+    if role != "Admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have access to this resource",
@@ -76,7 +76,7 @@ def get_admin_user(token: str = Depends(oauth2_scheme)):
 def check_admin_role(token: str = Depends(oauth2_scheme)) -> None:
     payload = verify_token(token)
     role: Optional[str] = payload.get("role")
-    if role != "admin":
+    if role != "Admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to access this resource",
@@ -86,9 +86,14 @@ def check_admin_role(token: str = Depends(oauth2_scheme)) -> None:
 def check_customer_role(token: str = Depends(oauth2_scheme)) -> None:
     payload = verify_token(token)
     role: Optional[str] = payload.get("role")
-    if role != "customer":
+    if role != "Costumer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to access this resource",
         )
 
+def get_current_user_email(token: str = Depends(oauth2_scheme)) -> str:
+    payload = verify_token(token)
+    email: Optional[str] = payload.get("username")
+    return email
+ 

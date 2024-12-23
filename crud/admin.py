@@ -64,7 +64,7 @@ def create_admin(db: Session, admin_data: AdminCreate) -> Admin:
 def update_admin(db: Session, admin_id: int, admin_data: AdminUpdate) ->Admin:
 
     update_data = admin_data.model_dump(exclude_unset=True)
-    admin_being_updated = get_admin(db, admin_id)
+    admin_being_updated = get_admin_by_id(db, admin_id)
     #hash passworda
 
 
@@ -106,10 +106,55 @@ def update_admin(db: Session, admin_id: int, admin_data: AdminUpdate) ->Admin:
 
 
 
+def update_current_admin(db: Session, admin_email: str, admin_data: AdminUpdate) -> Admin:
+    # Fetch the admin using the provided email
+    admin = db.query(Admin).filter(Admin.admin_email == admin_email).first()
+    
+    if not admin:
+        raise DbnotFoundException("Admin not found, check the email and enter another one!")
+
+    # Get the update data from the AdminUpdate schema
+    update_data = admin_data.model_dump(exclude_unset=True)
+
+    # Hash the password if it's included in the update
+    if "admin_password" in update_data:
+        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        update_data["admin_password"] = pwd_context.hash(admin_data.admin_password)
+
+    # Check if the email exists in both Admin and Costumer tables
+    admin_with_email = db.query(Admin).filter(Admin.admin_email == admin_data.admin_email).first()
+    costumer_with_email = db.query(Costumer).filter(Costumer.costumer_email == admin_data.admin_email).first()
+
+    # If email exists in either Admin or Costumer tables, raise an error
+    if admin_with_email or costumer_with_email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email address is already in use"
+        )
+
+    # Perform the update
+    try:
+        for key, value in update_data.items():
+            setattr(admin, key, value)
+
+        db.commit()  # Commit the changes to the database
+        db.refresh(admin)  # Refresh to get the updated object with new values
+        
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail="An error occurred while updating the admin."
+        )  
+
+    return admin
+
+
+
 
 def delete_admin(db: Session, admin_id: int) -> None:
     # Fetch the admin object to be deleted
-    admin = get_admin(db, admin_id)
+    admin = get_admin_by_id(db, admin_id)
     
     db.delete(admin)
 

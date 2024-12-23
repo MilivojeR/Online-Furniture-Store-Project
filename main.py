@@ -8,6 +8,7 @@ import jwt
 from jwt.exceptions import  InvalidTokenError
 from pydantic import BaseModel
 from passlib.context import CryptContext
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
 from routers import admin,costumer,product,category,auth
@@ -24,6 +25,17 @@ async def lifespan(app: FastAPI):
     print("Shutting down the app")
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
