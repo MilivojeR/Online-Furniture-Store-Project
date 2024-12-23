@@ -1,7 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Header() {
+    const navigate = useNavigate();
+    var token = sessionStorage.getItem('access_token');
+
+    function login() {
+        navigate('/logIn');
+    }
+
+    function logout() {
+        token = null;
+        sessionStorage.clear();
+        toast.success('Successfully logout');
+        setTimeout(() => {
+            navigate('/'); 
+        }, 500);
+    }
+
   return (
     <div>
         <nav className='navbar navbar-expand-lg navbar-dark bg-warning'>
@@ -17,9 +35,14 @@ function Header() {
                     <li className='nav-item'>
                         <Link className='nav-link' to='/'>About us</Link>
                     </li>
+                    { token == null ? 
                     <li className='nav-item ms-auto'>
-                        <button className='btn btn-danger'>Log in</button>
+                        <button className='btn btn-danger' onClick={() => login()}>Log in</button>
+                    </li> : 
+                    <li className='nav-item ms-auto'>
+                        <button className='btn btn-danger' onClick={() => logout()}>Log out</button>
                     </li>
+                    }
                 </ul>
             </div>
         </nav>

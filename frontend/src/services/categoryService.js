@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-class ProductService {
+class CategoryService {
     static fetchData = async () => {
         try {
           const response = await axios.get(
-            "https://b4b7-62-4-41-75.ngrok-free.app/product",  // API endpoint
+            "https://b4b7-62-4-41-75.ngrok-free.app/category/",  // API endpoint
             {
               headers: {
                 'Accept': 'application/json',  // Postavljanje Accept header-a
@@ -20,4 +20,4 @@ class ProductService {
       };
 }
 
-export default ProductService
+export default CategoryService

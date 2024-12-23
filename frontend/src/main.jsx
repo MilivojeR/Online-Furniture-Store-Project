@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import "bootstrap/dist/css/bootstrap.min.css";
+import {toast, ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // router
 import {
@@ -26,15 +28,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <><Header/><HomePage /></>
+        element: <><Header/><ToastContainer position="top-center" autoClose={1000} /><HomePage /></>
       },
       {
         path: '/products',
-        element: <><Header/><ProductsPage /></>
+        element: <><Header/><ToastContainer position="top-center" autoClose={1000} /><ProductsPage /></>
       },
       {
         path: '/logIn',
-        element: <LoginPage />
+        element: <><Header/><ToastContainer position="top-center" autoClose={1000} /><LoginPage /></>
       },
       {
         path: '/singleProduct',

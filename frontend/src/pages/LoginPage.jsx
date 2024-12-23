@@ -4,7 +4,7 @@ import { Form, Formik } from 'formik';
 import TextFieldComponent from '../components/TextFieldComponent';
 import login from '../assets/login.avif';
 import axios from 'axios';
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,6 @@ function LoginPage() {
   return (
 
     <div className='d-flex flex-row justify-content-center align-items-center' style={{minHeight: '80vh'}}>
-        <ToastContainer position="top-center" autoClose={1000} />
         <div className='col-md-5'>
             <Formik 
                 initialValues={{
@@ -34,7 +33,7 @@ function LoginPage() {
                 validationSchema={validate}
                 onSubmit={async(values) => {
                     console.log(values)
-                    await axios.post('https://954e-62-4-41-75.ngrok-free.app/auth/token', 
+                    await axios.post('https://b4b7-62-4-41-75.ngrok-free.app/auth/token', 
                         {
                             grant_type: 'password',
                             username: values.username,
@@ -48,6 +47,7 @@ function LoginPage() {
                     ).then(res => {
                         console.log(res.data);
                         toast.success('Successful login');
+                        sessionStorage.setItem('access_token', res.data.access_token);
                         setTimeout(() => {
                             navigate('/');
                         }, 500);
