@@ -15,17 +15,8 @@ class ProductBase(BaseModel):
         orm_mode = True  
 
 
-class ProductCreate(ProductBase):
-     pass
 
 
-class ProductUpdate(ProductBase):
-    product_name:Optional[str] = None
-    product_price: Optional[float] = None
-    product_video_url:Optional[str] = None
-    product_picture_url:Optional[str] = None
-    product_description: Optional[str] = None
-    product_category_id:Optional[int] = None
 
     
 class Product(ProductBase):
@@ -38,31 +29,45 @@ class Product(ProductBase):
 
 class ProductGalleryBase(BaseModel):
     image_url: str
-    product_id: int
 
     class Config:
         orm_mode = True
 
 
 class ProductGalleryCreate(ProductGalleryBase):
-    pass
+    pass  
 
 
 class ProductGalleryUpdate(ProductGalleryBase):
-    image_url: Optional[str] = None
-
+    image_url: Optional[str] = None  
 
 
 class ProductGallery(ProductGalleryBase):
-    gallery_id: int
-    
+    gallery_id: int  
 
     class Config:
         orm_mode = True
 
 
 class ProductWithGallery(Product):
-    gallery: List[ProductGallery] = []
+    gallery: List[ProductGallery] = []  
 
+    class Config:
+        orm_mode = True
+
+
+class ProductCreate(ProductBase):
+    gallery: List[ProductGalleryCreate] = []  
+    class Config:
+        orm_mode = True
+
+class ProductUpdate(ProductBase):
+    product_name:Optional[str] = None
+    product_price: Optional[float] = None
+    product_video_url:Optional[str] = None
+    product_picture_url:Optional[str] = None
+    product_description: Optional[str] = None
+    product_category_id:Optional[int] = None
+    gallery: Optional[List[ProductGalleryCreate]] = None
     class Config:
         orm_mode = True

@@ -1,7 +1,7 @@
 
 
 import crud.product as products 
-from schemas.product import  ProductCreate,ProductUpdate,ProductBase,Product,ProductGallery,ProductGalleryCreate
+from schemas.product import  ProductCreate,ProductUpdate,ProductBase,Product,ProductGallery,ProductGalleryCreate,ProductWithGallery
 from exceptions import DbnotFoundException
 from database import db
 from crud.token import check_admin_role
@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Depends
 
 
 router = APIRouter()
-@router.get("/product/{product_id}", response_model=Product, tags=["public"])
+@router.get("/product/{product_id}", response_model=ProductWithGallery, tags=["public"])
 def get_product(product_id: int, db: db):
     try:
         return products.get_product(db, product_id)
@@ -21,7 +21,7 @@ def get_product(product_id: int, db: db):
         raise HTTPException(status_code=404, detail=f"Product {product_id} not found!")
 
 
-@router.get("/product", response_model=list[Product], tags=["public"])
+@router.get("/product", response_model=list[ProductWithGallery], tags=["public"])
 def get_products( db: db):
     try:
         return products.get_products(db)

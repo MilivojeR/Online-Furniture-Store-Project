@@ -28,6 +28,4 @@ class ProductGallery(Base):
     product_id: Mapped[int] = mapped_column(Integer, ForeignKey("Product.product_id"), nullable=False)
     image_url: Mapped[str] = mapped_column(String, nullable=False)
     
-
-    
     product: Mapped["Product"] = relationship("Product", back_populates="gallery")
