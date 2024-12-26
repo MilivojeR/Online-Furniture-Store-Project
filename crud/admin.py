@@ -107,11 +107,15 @@ def update_admin(db: Session, admin_id: int, admin_data: AdminUpdate) ->Admin:
 
 
 def update_current_admin(db: Session, admin_email: str, admin_data: AdminUpdate) -> Admin:
+ 
     admin = db.query(Admin).filter(Admin.admin_email == admin_email).first()
     
     if not admin:
         raise DbnotFoundException("Admin not found, check the email and enter another one!")
+
+
     update_data = admin_data.model_dump(exclude_unset=True)
+
 
     if "admin_password" in update_data:
         pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -142,6 +146,9 @@ def update_current_admin(db: Session, admin_email: str, admin_data: AdminUpdate)
         )  
 
     return admin
+
+
+
 
 def delete_admin(db: Session, admin_id: int) -> None:
     admin = get_admin_by_id(db, admin_id)

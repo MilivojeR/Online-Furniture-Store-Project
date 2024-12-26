@@ -23,9 +23,18 @@ def get_costumer_by_id(db: Session, costumer_id: int) -> Costumer:
         raise DbnotFoundException
     return costumer
 
-def get_costumers(db: Session)->  list[Costumer]:      
+
+
+
+
+
+def get_costumers(db: Session)->  list[Costumer]:
+        
         costumers = db.query(Costumer).all()
         return costumers
+
+
+
 
 #kreira korisnika i gleda dal postoji email unutar baze podataka takodje prolazi kroz emaile admina
 #prilikom kreiranja hashuje password
@@ -71,6 +80,8 @@ def update_costumer(db: Session, costumer_id: int, costumer_data: CostumerUpdate
     if not costumer_being_updated:
         raise DbnotFoundException("Costumer not found, check id and enter another one!")
     update_data = costumer_data.model_dump(exclude_unset=True)
+
+
     #hash passworda
     if "costumer_password" in update_data:
         pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -79,6 +90,9 @@ def update_costumer(db: Session, costumer_id: int, costumer_data: CostumerUpdate
     #provjera dal postoji email u obje tabele Admin i Costumer
     admin_with_email = db.query(Admin).filter(Admin.admin_email == costumer_data.costumer_email).first()
     costumer_with_email = db.query(Costumer).filter(Costumer.costumer_email == costumer_data.costumer_email).first()
+
+
+
     #Ako postoji digni gresku
     if admin_with_email or costumer_with_email:
             raise HTTPException(
@@ -92,8 +106,8 @@ def update_costumer(db: Session, costumer_id: int, costumer_data: CostumerUpdate
             for key, value in update_data.items():
                 setattr(costumer_being_updated, key, value)
 
-            db.commit()  
-            db.refresh(costumer_being_updated)  
+            db.commit()  # Commit the changes to the database
+            db.refresh(costumer_being_updated)  # Refresh to get the updated object with new values
             
         except IntegrityError as e:
 
@@ -108,6 +122,8 @@ def update_costumer(db: Session, costumer_id: int, costumer_data: CostumerUpdate
 
 
 def update_current_costumer(db: Session, costumer_email: str, costumer_data: CostumerUpdate) -> Costumer:
+    # Fetch the customer using the provided email
+
 
     costumer = db.query(Costumer).filter(Costumer.costumer_email == costumer_email).first()
     
@@ -116,28 +132,29 @@ def update_current_costumer(db: Session, costumer_email: str, costumer_data: Cos
     
     update_data = costumer_data.model_dump(exclude_unset=True)
 
-
+    # Hash password if it is included in the update
     if "costumer_password" in update_data:
         pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         update_data["costumer_password"] = pwd_context.hash(costumer_data.costumer_password)
 
-
+    # Check if the email exists in both Admin and Costumer tables
     admin_with_email = db.query(Admin).filter(Admin.admin_email == costumer_data.costumer_email).first()
     costumer_with_email = db.query(Costumer).filter(Costumer.costumer_email == costumer_data.costumer_email).first()
 
+    # If email exists in either Admin or Costumer tables, raise an error
     if admin_with_email or (costumer_with_email and costumer_with_email.costumer_id != costumer.costumer_id):
         raise HTTPException(
             status_code=400,
             detail="Email address is already in use"
         )
 
-
+    # Perform the update
     try:
         for key, value in update_data.items():
             setattr(costumer, key, value)
 
-        db.commit()  
-        db.refresh(costumer)  
+        db.commit()  # Commit changes to the database
+        db.refresh(costumer)  # Refresh to get the updated object with new values
         
     except IntegrityError as e:
         db.rollback()
