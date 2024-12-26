@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 
 class ProductBase(BaseModel):
@@ -33,3 +33,36 @@ class Product(ProductBase):
 
     class Config:
         orm_mode = True  
+
+
+
+class ProductGalleryBase(BaseModel):
+    image_url: str
+    product_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class ProductGalleryCreate(ProductGalleryBase):
+    pass
+
+
+class ProductGalleryUpdate(ProductGalleryBase):
+    image_url: Optional[str] = None
+
+
+
+class ProductGallery(ProductGalleryBase):
+    gallery_id: int
+    
+
+    class Config:
+        orm_mode = True
+
+
+class ProductWithGallery(Product):
+    gallery: List[ProductGallery] = []
+
+    class Config:
+        orm_mode = True
