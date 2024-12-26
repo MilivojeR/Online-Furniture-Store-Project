@@ -1,30 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-<<<<<<< HEAD
 import ProductService from '../services/productService'
 import customAxios from '../utils/customAxios';
 import CategoryService from '../services/categoryService';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-=======
-import ProductService from "../services/productService";
-import customAxios from "../utils/customAxios";
-import CategoryService from "../services/categoryService";
-import axios from "axios";
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
 
 function ProductsPage() {
   const [showModal, setShowModal] = useState(false);
   const [products, setProducts] = useState([]);
-<<<<<<< HEAD
 
   const navigate = useNavigate();
 
   const token = sessionStorage.getItem('access_token');
-=======
-  const token = sessionStorage.getItem("access_token");
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
 
   const [imageUrls, setImageUrls] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
@@ -86,7 +75,6 @@ function ProductsPage() {
     setShowModal(false);
   };
 
-<<<<<<< HEAD
   const clearForm = () => {
     setFormData({
       product_name: '',
@@ -109,20 +97,6 @@ function ProductsPage() {
                   toast.error('Delete failed');
                 })
   }
-=======
-  const deleteProduct = async (id) => {
-    await customAxios
-      .delete(`https://9874-62-4-41-75.ngrok-free.app/product/${id}`)
-      .then((res) => {
-        toast.success("Successfully delete");
-        const newProducts = products.filter((p) => p.product_id != id);
-        setProducts(newProducts);
-      })
-      .catch((error) => {
-        toast.error("Delete failed");
-      });
-  };
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
 
   const handleImageUrlChange = (e) => {
     setImageUrl(e.target.value);
@@ -156,7 +130,7 @@ function ProductsPage() {
       product_picture_url: picture_url,
     };
     console.log(product);
-<<<<<<< HEAD
+    
     await axios.post(`${import.meta.env.VITE_NGROK_URL}product`, product, 
                   {
                     headers: {
@@ -174,36 +148,16 @@ function ProductsPage() {
                   toast.error('Add failed');
                 })
   }
-=======
-    await axios
-      .post("https://9874-62-4-41-75.ngrok-free.app/product", product, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        toast.success("Successfully add");
-        setProducts([...products, res.data]);
-        setShowModal(false);
-      })
-      .catch((error) => {
-        toast.error("Add failed");
-      });
-  };
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
 
   const handleEdit = async () => {
     if (productId == null) {
       toast.error("Edit failed");
       return;
     }
-<<<<<<< HEAD
+
     console.log(productId);
     const picture_url = imageUrls.join(', ');
-=======
-    const picture_url = imageUrls.join(", ");
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
+
     const product = {
       ...formData,
       product_price: parseFloat(formData.product_price),
@@ -211,7 +165,7 @@ function ProductsPage() {
       product_picture_url: picture_url,
     };
     console.log(product);
-<<<<<<< HEAD
+
     await axios.put(`${import.meta.env.VITE_NGROK_URL}product/${productId}`, product, 
                   {
                     headers: {
@@ -230,28 +184,6 @@ function ProductsPage() {
                   toast.error('Edit failed');
                 })
   }
-=======
-    await axios
-      .put(
-        `https://9874-62-4-41-75.ngrok-free.app/product/${productId}`,
-        product,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        toast.success("Successfully edit");
-        loadProducts();
-        setShowModal(false);
-      })
-      .catch((error) => {
-        toast.error("Edit failed");
-      });
-  };
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
 
   const detailsPage = (id) => {
     navigate(`/singleProduct/${id}`);
@@ -289,7 +221,6 @@ function ProductsPage() {
                 {p.product_description.slice(0, 150)}...
               </p>
             </div>
-<<<<<<< HEAD
             <div className='card-footer'>
               <button className='btn btn-warning btn-sm' onClick={() => detailsPage(p.product_id)}>Details</button>
               {
@@ -299,28 +230,6 @@ function ProductsPage() {
                   </>
                 )
               }
-=======
-            <div className="card-footer">
-              <button className="btn btn-warning btn-sm">
-                Kontakt za informacije
-              </button>
-              {token != null && (
-                <>
-                  <button
-                    className="btn btn-outline-success btn-sm ms-5"
-                    onClick={() => openEditDialog(p, 2)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-outline-danger btn-sm ms-2"
-                    onClick={() => deleteProduct(p.product_id)}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
->>>>>>> 1ad1f86e6fc763abc9f7af10a40395c401cc3935
             </div>
           </div>
         ))}
