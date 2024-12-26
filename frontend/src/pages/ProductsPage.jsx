@@ -5,10 +5,14 @@ import ProductService from '../services/productService'
 import customAxios from '../utils/customAxios';
 import CategoryService from '../services/categoryService';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function ProductsPage() {
   const [showModal, setShowModal] = useState(false);
   const [products, setProducts] = useState([]);
+
+  const navigate = useNavigate();
+
   const token = sessionStorage.getItem('access_token');
 
   const [imageUrls, setImageUrls] = useState([]);
@@ -69,11 +73,24 @@ function ProductsPage() {
   };
 
   const closeModal = () => {
+    clearForm();
     setShowModal(false);
   };
 
+  const clearForm = () => {
+    setFormData({
+      product_name: '',
+      product_price: 0,
+      product_video_url: '',
+      product_picture_url: '',
+      product_description: '',
+      product_category_id: null
+    });
+    setImageUrls([]);
+  }
+
   const deleteProduct = async(id) => {
-    await customAxios.delete(`https://9a80-62-4-41-75.ngrok-free.app/product/${id}`)
+    await customAxios.delete(`${import.meta.env.VITE_NGROK_URL}product/${id}`)
                .then(res => {
                   toast.success('Successfully delete');
                   const newProducts = products.filter(p => p.product_id != id);
@@ -115,7 +132,7 @@ function ProductsPage() {
       product_picture_url: picture_url
     }
     console.log(product);
-    await axios.post('https://9a80-62-4-41-75.ngrok-free.app/product', product, 
+    await axios.post(`${import.meta.env.VITE_NGROK_URL}product`, product, 
                   {
                     headers: {
                       'Authorization': `Bearer ${token}`,
@@ -126,6 +143,7 @@ function ProductsPage() {
                .then(res => {
                   toast.success('Successfully add');
                   setProducts([...products, res.data]);
+                  clearForm();
                   setShowModal(false);
                 }).catch(error => {
                   toast.error('Add failed');
@@ -137,6 +155,7 @@ function ProductsPage() {
       toast.error('Edit failed');
       return;
     }
+    console.log(productId);
     const picture_url = imageUrls.join(', ');
     const product = {
       ...formData,
@@ -145,7 +164,7 @@ function ProductsPage() {
       product_picture_url: picture_url
     }
     console.log(product);
-    await axios.put(`https://9a80-62-4-41-75.ngrok-free.app/product/${productId}`, product, 
+    await axios.put(`${import.meta.env.VITE_NGROK_URL}product/${productId}`, product, 
                   {
                     headers: {
                       'Authorization': `Bearer ${token}`,
@@ -155,11 +174,17 @@ function ProductsPage() {
                 )
                .then(res => {
                   toast.success('Successfully edit');
+                  clearForm();
                   loadProducts();
                   setShowModal(false);
                 }).catch(error => {
+                  console.log(error);
                   toast.error('Edit failed');
                 })
+  }
+
+  const detailsPage = (id) => {
+    navigate(`/singleProduct/${id}`);
   }
 
   return (
@@ -181,7 +206,7 @@ function ProductsPage() {
               <p className='card-subtitle mb-2 text-muted'>{p.product_description.slice(0, 150)}...</p>
             </div>
             <div className='card-footer'>
-              <button className='btn btn-warning btn-sm'>Kontakt za informacije</button>
+              <button className='btn btn-warning btn-sm' onClick={() => detailsPage(p.product_id)}>Details</button>
               {
                 token != null && ( <>
                   <button className='btn btn-outline-success btn-sm ms-5' onClick={() => openEditDialog(p, 2)}>Edit</button>

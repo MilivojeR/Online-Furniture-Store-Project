@@ -39,8 +39,8 @@ const router = createBrowserRouter([
         element: <><Header/><ToastContainer position="top-center" autoClose={1000} /><LoginPage /></>
       },
       {
-        path: '/singleProduct',
-        element: <SingleProductPage />
+        path: '/singleProduct/:id',
+        element: <><Header/><ToastContainer position="top-center" autoClose={1000} /><SingleProductPage /></>
       }
     ]
   }

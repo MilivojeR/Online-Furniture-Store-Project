@@ -4,7 +4,7 @@ class CategoryService {
     static fetchData = async () => {
         try {
           const response = await axios.get(
-            "https://9a80-62-4-41-75.ngrok-free.app/category/",  // API endpoint
+            `${import.meta.env.VITE_NGROK_URL}category/`,  // API endpoint
             {
               headers: {
                 'Accept': 'application/json',  // Postavljanje Accept header-a
