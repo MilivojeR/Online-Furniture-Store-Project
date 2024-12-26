@@ -33,7 +33,7 @@ function LoginPage() {
                 validationSchema={validate}
                 onSubmit={async(values) => {
                     console.log(values)
-                    await axios.post('https://b4b7-62-4-41-75.ngrok-free.app/auth/token', 
+                    await axios.post('https://9a80-62-4-41-75.ngrok-free.app/auth/token', 
                         {
                             grant_type: 'password',
                             username: values.username,

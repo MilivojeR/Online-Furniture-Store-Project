@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProductService from '../services/productService'
 import customAxios from '../utils/customAxios';
 import CategoryService from '../services/categoryService';
+import axios from 'axios';
 
 function ProductsPage() {
   const [showModal, setShowModal] = useState(false);
@@ -15,16 +16,30 @@ function ProductsPage() {
 
   const [categories, setCategories] = useState([]);
 
+  const [flag, setFlag] = useState(null);
+
+  const [productId, setProductId] = useState(null);
+
+  const [formData, setFormData] = useState({
+    product_name: '',
+    product_price: null,
+    product_video_url: '',
+    product_picture_url: '',
+    product_description: '',
+    product_category_id: null
+  });
+
+  const loadProducts = async () => {
+    try {
+        const data = await ProductService.fetchData(); 
+        setProducts(data); 
+    } catch (error) {
+        console.error('Greška pri učitavanju proizvoda:', error);
+    }
+  };
+
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-          const data = await ProductService.fetchData(); 
-          setProducts(data); 
-      } catch (error) {
-          console.error('Greška pri učitavanju proizvoda:', error);
-      }
-    };
 
     loadProducts();
 
@@ -40,7 +55,16 @@ function ProductsPage() {
     loadCategories();
   }, [])
 
-  const openModal = () => {
+  const openModal = (flag) => {
+    setFlag(flag);
+    setShowModal(true);
+  };
+
+  const openEditDialog = (p, flag) => {
+    setProductId(p.product_id);
+    setImageUrls(p.product_picture_url.split(', '));
+    setFlag(flag);
+    setFormData(p);
     setShowModal(true);
   };
 
@@ -49,7 +73,7 @@ function ProductsPage() {
   };
 
   const deleteProduct = async(id) => {
-    await customAxios.delete(`https://b4b7-62-4-41-75.ngrok-free.app/product/${id}`)
+    await customAxios.delete(`https://9a80-62-4-41-75.ngrok-free.app/product/${id}`)
                .then(res => {
                   toast.success('Successfully delete');
                   const newProducts = products.filter(p => p.product_id != id);
@@ -74,11 +98,77 @@ function ProductsPage() {
     setImageUrls(imageUrls.filter((image) => image !== url));
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    const picture_url = imageUrls.join(', ');
+    const product = {
+      ...formData,
+      product_price: parseFloat(formData.product_price),
+      product_category_id: Number(formData.product_category_id),
+      product_picture_url: picture_url
+    }
+    console.log(product);
+    await axios.post('https://9a80-62-4-41-75.ngrok-free.app/product', product, 
+                  {
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                )
+               .then(res => {
+                  toast.success('Successfully add');
+                  setProducts([...products, res.data]);
+                  setShowModal(false);
+                }).catch(error => {
+                  toast.error('Add failed');
+                })
+  }
+
+  const handleEdit = async () => {
+    if (productId == null) {
+      toast.error('Edit failed');
+      return;
+    }
+    const picture_url = imageUrls.join(', ');
+    const product = {
+      ...formData,
+      product_price: parseFloat(formData.product_price),
+      product_category_id: Number(formData.product_category_id),
+      product_picture_url: picture_url
+    }
+    console.log(product);
+    await axios.put(`https://9a80-62-4-41-75.ngrok-free.app/product/${productId}`, product, 
+                  {
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                )
+               .then(res => {
+                  toast.success('Successfully edit');
+                  loadProducts();
+                  setShowModal(false);
+                }).catch(error => {
+                  toast.error('Edit failed');
+                })
+  }
+
   return (
     <div className='container'>
       <div className='d-flex flex-row mt-2'>
         <h1>All products</h1>
-        <button className='btn btn-success btn-sm ms-2' onClick={() => openModal()}>Add new product</button>
+        {
+          token != null && <button className='btn btn-success btn-sm ms-2' onClick={() => openModal(1)}>Add new product</button>
+        }
       </div>
       <hr/>
       <div className='mt-3 d-flex p-4 flex-wrap justify-content-around'>
@@ -94,7 +184,7 @@ function ProductsPage() {
               <button className='btn btn-warning btn-sm'>Kontakt za informacije</button>
               {
                 token != null && ( <>
-                  <button className='btn btn-outline-success btn-sm ms-5'>Edit</button>
+                  <button className='btn btn-outline-success btn-sm ms-5' onClick={() => openEditDialog(p, 2)}>Edit</button>
                   <button className='btn btn-outline-danger btn-sm ms-2' onClick={() => deleteProduct(p.product_id)}>Delete</button>
                   </>
                 )
@@ -110,23 +200,22 @@ function ProductsPage() {
                     <div className="modal-content">
 
                         <div className="modal-header">
-                            <h5 className="modal-title">Add new product</h5>
+                            <h5 className="modal-title">Save product</h5>
                             <button type="button" className="btn-close" onClick={closeModal} aria-label="Close"></button>
                         </div>
-
                         <div className="modal-body">
-                            <form>
+                        <form>
                               <div>
                                 <label className='form-label' htmlFor='product_name'>Name:</label>
-                                <input className='form-control' type='text' id='product_name' name='product_name' placeholder='Enter name' required/>
+                                <input className='form-control' type='text' id='product_name' name='product_name' value={formData.product_name} onChange={handleChange} placeholder='Enter name' required/>
                               </div>
                               <div>
                                 <label className='form-label' htmlFor='product_price'>Price:</label>
-                                <input className='form-control' type='number' id='product_price' name='product_price' placeholder='Enter price' required/>
+                                <input className='form-control' type='number' id='product_price' name='product_price' value={formData.product_price} onChange={handleChange} placeholder='Enter price' required/>
                               </div>
                               <div>
                                 <label className='form-label' htmlFor='product_video_url'>Video:</label>
-                                <input className='form-control' type='text' id='product_video_url' name='product_video_url' placeholder='Enter video url'/>
+                                <input className='form-control' type='text' id='product_video_url' name='product_video_url' value={formData.product_video_url} onChange={handleChange} placeholder='Enter video url'/>
                               </div>
                               <div>
                               <label htmlFor="imageUrl" className="form-label">
@@ -169,20 +258,30 @@ function ProductsPage() {
                               </div>
                               <div>
                                 <label className='form-label' htmlFor='product_description'>Description:</label>
-                                <textarea className='form-control' rows='3' id='product_description' name='product_description' placeholder='Enter description' required></textarea>
+                                <textarea className='form-control' rows='3' id='product_description' name='product_description' value={formData.product_description} onChange={handleChange} placeholder='Enter description' required></textarea>
                               </div>
                               <div>
                               <label className='form-label' htmlFor='product_category_id'>Category:</label>
-                              <select className='form-select' id='product_category_id' name='product_category_id'>
-                                  
+                              <select className='form-select' id='product_category_id' name='product_category_id' value={formData.product_category_id} onChange={handleChange}>
+                                <option value="" selected disabled>Choose category</option>
+                                  {
+                                    categories.map((option, index) => (
+                                      <option key={index} value={option.category_id}>{option.category_name}</option>
+                                    ))
+                                  }
                               </select>
                               </div>
-                            </form>
+                              </form>
                         </div>
 
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
-                            <button type="button" className="btn btn-primary">Create</button>
+                            {
+                              flag == 1 && <button type="button" className="btn btn-primary" onClick={handleSubmit}>Create</button>
+                            }
+                             {
+                              flag == 2 && <button type="button" className="btn btn-primary" onClick={handleEdit}>Save</button>
+                            }
                         </div>
 
                     </div>
