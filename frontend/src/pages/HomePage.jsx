@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import greenChair from "../assets/greenChair.png";
 
 function HomePage() {
+  const navigate = useNavigate();
+
   function products() {
     navigate("/products");
   }
