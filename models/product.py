@@ -12,11 +12,22 @@ class Product(Base):
     product_video_url: Mapped[str] = mapped_column(String(255), nullable=False)
     product_picture_url: Mapped[str] = mapped_column(String, nullable=False)
     product_description: Mapped[str] = mapped_column(Text, nullable=True)
+    
     product_category_id: Mapped[int] = mapped_column(Integer, ForeignKey("Category.category_id"))
     
-    # Relationship to category: Each product belongs to one category
+  
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     cart_items: Mapped[list["CartItem"]] = relationship("CartItem", back_populates="product")
+    gallery: Mapped[list["ProductGallery"]] = relationship("ProductGallery", back_populates="product", cascade="all, delete-orphan")
 
     
 
+class ProductGallery(Base):
+    __tablename__ = "ProductGallery"
+    gallery_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("Product.product_id"), nullable=False)
+    image_url: Mapped[str] = mapped_column(String, nullable=False)
+    
+
+    
+    product: Mapped["Product"] = relationship("Product", back_populates="gallery")
