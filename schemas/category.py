@@ -20,7 +20,6 @@ class CategoryUpdate(CategoryBase):
     category_picture_url:Optional[str] = None
     category_description: Optional[str] = None
 
-
 class Category(CategoryBase):
     category_id: int  
 

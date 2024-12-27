@@ -8,9 +8,7 @@ from sqlalchemy.orm import Session
 
 from schemas.token import TokenData
 
-
-# Secret key and algorithm for JWT token creation
-SECRET_KEY = "your-secret-key"  # Replace with a strong secret key
+SECRET_KEY = "your-secret-key" 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -18,11 +16,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-# Utility to hash a password
+
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
-# Utility to verify a password
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 

@@ -1,8 +1,6 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from exceptions import DbnotFoundException
-
 
 from crud.token import check_admin_role,check_customer_role
 from schemas.costumer import Costumer, CostumerCreate, CostumerUpdate
@@ -10,8 +8,6 @@ from database import get_db
 import crud.costumer as costumers
 from crud.token import get_current_user_email
 from schemas.token import TokenData
-
-
 
 router = APIRouter()
 
@@ -44,8 +40,6 @@ def delete_costumer(costumer_id: int, db: Session = Depends(get_db)):
     except DbnotFoundException:
         raise HTTPException(status_code=404, detail=f"Customer {costumer_id} not found!")
 
-
-
 # Admin-only endpoint: Update a customer's details
 @router.put("/costumers/{costumer_id}", response_model=CostumerUpdate, dependencies=[Depends(check_admin_role)], tags=["admin-only"])
 def update_costumer(costumer_id: int, costumer: CostumerUpdate, db: Session = Depends(get_db)):
@@ -55,7 +49,7 @@ def update_costumer(costumer_id: int, costumer: CostumerUpdate, db: Session = De
     except DbnotFoundException:
         raise HTTPException(status_code=404, detail=f"Customer {costumer_id} not found!")
     
-
+#Costumer only endpoint: Self update
 @router.put("/costumers-only/", response_model=CostumerUpdate, dependencies=[Depends(check_customer_role)], tags=["costumer_only"])
 def update_current_costumer( costumer: CostumerUpdate,costumer_email: str = Depends(get_current_user_email),  db: Session = Depends(get_db)):
     

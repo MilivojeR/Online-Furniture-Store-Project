@@ -7,7 +7,6 @@ class AdminBase(BaseModel):
     admin_last_name: str
     admin_email: EmailStr
     
-
     class Config:
         orm_mode = True  
 
@@ -15,8 +14,6 @@ class AdminBase(BaseModel):
 class AdminCreate(AdminBase):
      admin_role: str =Field(default="Admin") 
      admin_password: str
-
-
 
 class AdminUpdate(AdminBase):
     admin_first_name: Optional[str] = None

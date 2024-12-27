@@ -40,10 +40,6 @@ def update_admin(admin_id: int, admin: AdminUpdate, db: Session = Depends(get_db
     except DbnotFoundException:
         raise HTTPException(status_code=404, detail=f"Admin {admin_id} not found!")
 
-
-
-
-
 @router.put("/admin-only/", response_model=AdminUpdate, dependencies=[Depends(check_admin_role)], tags=["admin-only"])
 def update_current_admin( admin: AdminUpdate,admin_email: str = Depends(get_current_user_email),  db: Session = Depends(get_db)):
     

@@ -7,10 +7,10 @@ class CostumerBase(BaseModel):
     costumer_last_name: str
     costumer_email: EmailStr
     costumer_adress:str
-    costumer_all_order_details: Optional[str] = ""  # Default to empty string
-    costumer_total_points_acquired: int = 0  # Default to 0
-    costumer_day_created: Optional[datetime] = None  # New field
-    costumer_day_last_purchase: Optional[datetime] = None  # New field
+    costumer_all_order_details: Optional[str] = ""  
+    costumer_total_points_acquired: int = 0  
+    costumer_day_created: Optional[datetime] = None  
+    costumer_day_last_purchase: Optional[datetime] = None  
   
 
     class Config:
@@ -19,7 +19,7 @@ class CostumerBase(BaseModel):
 
 class CostumerCreate(CostumerBase):
 
-    costumer_role: str =Field(default="Costumer")  # Role field
+    costumer_role: str =Field(default="Costumer")  
     costumer_password: str  
     class Config:
         orm_mode = True  # 

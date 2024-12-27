@@ -20,10 +20,10 @@ class Costumer(Base):
   
     costumer_day_created: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=func.now(), nullable=False
-    )  # Automatically set to current timestamp when the record is created
+    )  
     costumer_day_last_purchase: Mapped[datetime.datetime] = mapped_column(
         DateTime, nullable=True
-    )  # Nullable, initially no purchases made
+    ) 
     shopping_cart: Mapped["ShoppingCart"] = relationship("ShoppingCart", back_populates="costumer", uselist=False)
 
 
