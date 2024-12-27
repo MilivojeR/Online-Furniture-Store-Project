@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 function ProductsPage() {
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [products, setProducts] = useState([]);
 
   const navigate = useNavigate();
@@ -75,6 +76,16 @@ function ProductsPage() {
     setShowModal(false);
   };
 
+  const openDeleteModal = (id) => {
+      setProductId(id);
+      setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+
   const clearForm = () => {
     setFormData({
       product_name: '',
@@ -96,6 +107,7 @@ function ProductsPage() {
                 }).catch(error => {
                   toast.error('Delete failed');
                 })
+    setShowDeleteModal(false);
   }
 
   const handleImageUrlChange = (e) => {
@@ -151,7 +163,7 @@ function ProductsPage() {
 
   const handleEdit = async () => {
     if (productId == null) {
-      toast.error("Edit failed");
+      toast.error("Edit failed product");
       return;
     }
 
@@ -226,7 +238,7 @@ function ProductsPage() {
               {
                 token != null && ( <>
                   <button className='btn btn-outline-success btn-sm ms-5' onClick={() => openEditDialog(p, 2)}>Edit</button>
-                  <button className='btn btn-outline-danger btn-sm ms-2' onClick={() => deleteProduct(p.product_id)}>Delete</button>
+                  <button className='btn btn-outline-danger btn-sm ms-2' onClick={() => openDeleteModal(p.product_id)}>Delete</button>
                   </>
                 )
               }
@@ -421,6 +433,56 @@ function ProductsPage() {
       {showModal && (
         <div className="modal-backdrop fade show" onClick={closeModal}></div>
       )}
+
+
+
+      <div
+        className={`modal fade ${showDeleteModal ? "show" : ""}`}
+        tabIndex="-1"
+        style={{ display: showDeleteModal ? "block" : "none" }}
+        aria-hidden={!showDeleteModal}
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Delete message</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={closeDeleteModal}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <h1>Are you sure?</h1>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={closeDeleteModal}
+              >
+                No
+              </button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => deleteProduct(productId)}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {showDeleteModal && (
+        <div className="modal-backdrop fade show" onClick={closeDeleteModal}></div>
+      )}
+
+
+
     </div>
   );
 }
